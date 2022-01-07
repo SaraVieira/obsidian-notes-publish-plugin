@@ -1,0 +1,10 @@
+[template.environment]
+  AIRTABLEAPIKEY = "change me for your secret token"
+  AIRTABLEBASE = "set the url to base"
+  AIRTABLEVIEW="change me for your view"
+
+[build]
+  # Directory to change to before starting a build.
+  # This is where we will look for package.json/.nvmrc/etc.
+  # If not set, defaults to the root directory.
+  base = "website/"
