@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from '../Components/Icons'
-import { useLocalStorage } from '../gooks/useLocalStorage'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {

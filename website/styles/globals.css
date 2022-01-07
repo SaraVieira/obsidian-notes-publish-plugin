@@ -1395,3 +1395,13 @@ main {
 	top: 20px;
 	cursor: pointer;
 }
+
+pre code {
+	font-size: 16px;
+}
+
+img {
+	display: block;
+	margin: 20px auto;
+	max-width: 100%;
+}

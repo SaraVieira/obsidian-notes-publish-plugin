@@ -4,7 +4,7 @@ export const Moon = (props) => (
 		x="0px"
 		y="0px"
 		viewBox="0 0 512 512"
-		style={{ 'enable-background': 'new 0 0 512 512' }}
+		style={{ enableBackground: 'new 0 0 512 512' }}
 		{...props}
 	>
 		<g>
@@ -41,7 +41,7 @@ export const Sun = (props) => (
 		x="0px"
 		y="0px"
 		viewBox="0 0 512 512"
-		style={{ 'enable-background': 'new 0 0 512 512' }}
+		style={{ enableBackground: 'new 0 0 512 512' }}
 		{...props}
 	>
 		<g>

@@ -1,5 +1,5 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import dark from 'react-syntax-highlighter/dist/cjs/styles/prism/vs-dark'
+import dark from 'react-syntax-highlighter/dist/cjs/styles/prism/dracula'
 
 export function Code({ node, inline, className, children, ...props }) {
 	const match = /language-(\w+)/.exec(className || '')

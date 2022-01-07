@@ -1,0 +1,28 @@
+{
+	"name": "obsidian-sample-plugin",
+	"version": "0.12.0",
+	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"main": "main.js",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "node esbuild.config.mjs production",
+		"format": "prettier --loglevel warn --write \"**/*.{ts,tsx,css,md}\"",
+		"posttest": "npm run format"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^16.11.6",
+
+		"builtin-modules": "^3.2.0",
+		"esbuild": "0.13.12",
+		"obsidian": "^0.12.17",
+
+		"tslib": "2.3.1",
+		"typescript": "4.4.4"
+	},
+	"dependencies": {
+		"airtable": "^0.11.1"
+	}
+}
