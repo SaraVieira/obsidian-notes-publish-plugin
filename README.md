@@ -1,6 +1,6 @@
 ## Obsidian Share Link Plugin
 
-[https://www.netlify.com/img/deploy/button.svg](https://app.netlify.com/start/deploy?repository=https://github.com/SaraVieira/obsidian-share-link-plugin.git)
+![https://www.netlify.com/img/deploy/button.svg](https://app.netlify.com/start/deploy?repository=https://github.com/SaraVieira/obsidian-share-link-plugin)
 
 This is a sample plugin for Obsidian (https://obsidian.md).
 
