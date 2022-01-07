@@ -5,7 +5,7 @@
 
 [build]
   base = "website/"
-  publish= "website/.next"
+  publish= ".next"
 
 [[plugins]]
 package = "@netlify/plugin-nextjs"
