@@ -4,7 +4,9 @@ import Head from 'next/head'
 import remarkInlineLinks from 'remark-inline-links'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
+import fm from 'remark-frontmatter'
 import { Code } from '../../Components/Code'
+
 export default function Note({ note }) {
 	return (
 		<>
@@ -25,10 +27,13 @@ export default function Note({ note }) {
 				</time>
 			</small>
 			<ReactMarkdown
-				remarkPlugins={[remarkInlineLinks, gfm]}
+				remarkPlugins={[remarkInlineLinks, gfm, [fm, ['yaml', 'toml']]]}
 				rehypePlugins={[rehypeRaw]}
 				components={{ code: Code }}
 				renderers={{
+					yaml: () => 'sup',
+					toml: () => 'sup2',
+					frontmatter: () => 'sup2',
 					link: (props) => {
 						return props.href.startsWith('/') ? (
 							<a href={props.href}>{props.children}</a>
@@ -49,7 +54,6 @@ export default function Note({ note }) {
 		</>
 	)
 }
-
 export async function getServerSideProps({ query }) {
 	const { AIRTABLEAPIKEY, AIRTABLEBASE, AIRTABLEVIEW } = process.env
 	const base = new Airtable({

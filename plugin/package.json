@@ -21,8 +21,6 @@
 		"typescript": "4.4.4"
 	},
 	"dependencies": {
-		"airtable": "^0.11.1",
-		"airtable-plus": "^1.0.4",
-		"asyncairtable": "^2.3.1"
+		"airtable": "^0.11.1"
 	}
 }

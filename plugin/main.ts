@@ -53,17 +53,7 @@ class SampleSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings()
 					})
 			)
-		new Setting(containerEl)
-			.setName('Website URL')
-			.setDesc('Where your website deployed')
-			.addText((text) =>
-				text
-					.setValue(this.plugin.settings.websiteUrl)
-					.onChange(async (value) => {
-						this.plugin.settings.websiteUrl = value
-						await this.plugin.saveSettings()
-					})
-			)
+
 		new Setting(containerEl)
 			.setName('Airtable Base ID')
 			.setDesc('What is the base ID of your Airtable base')
@@ -86,6 +76,31 @@ class SampleSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings()
 					})
 			)
+		new Setting(containerEl)
+			.setName('Website URL')
+			.setDesc('Where your website deployed')
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.websiteUrl)
+					.onChange(async (value) => {
+						this.plugin.settings.websiteUrl = value
+						await this.plugin.saveSettings()
+					})
+			)
+
+		if (!this.plugin.settings.websiteUrl) {
+			new Setting(containerEl)
+				.setName('Deploy Website to Netlify')
+				.addButton((button) => {
+					button
+						.setButtonText('Deploy')
+						.onClick(async () =>
+							window.open(
+								'https://app.netlify.com/start/deploy?repository=https://github.com/SaraVieira/obsidian-share-link-plugin'
+							)
+						)
+				})
+		}
 	}
 }
 
