@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from '../Components/Icons'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import '../styles/globals.css'
+import '../styles/typesettings.css'
+import '../styles/style.css'
 
 function MyApp({ Component, pageProps }) {
 	const [dark, setDark] = useLocalStorage('dark-mode', false)
