@@ -4,7 +4,7 @@
   AIRTABLEVIEW="Your Airtable View"
 
 [build]
-  base = "wesbite"
+  base = "website"
   publish = ".next"
 
 [[plugins]]
