@@ -80,6 +80,8 @@ export async function getServerSideProps({ query }) {
 		maxRecords: 1,
 	})
 
+	if (!records.length) return { notFound: true }
+
 	const note = records[0].fields
 	const parsedMD = fm(note.data)
 
