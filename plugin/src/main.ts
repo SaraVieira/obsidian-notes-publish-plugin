@@ -10,7 +10,9 @@ import {
 } from 'obsidian'
 
 import Airtable from 'airtable'
-import { create, read, update } from './airtableHelpers'
+import { create, read, update } from './utils/airtableHelpers'
+import { createSettings } from './settings'
+import { slugify } from './utils/slugify'
 
 interface ShareLinkPluginSettings {
 	airtableAPIKey: string
@@ -26,7 +28,7 @@ const DEFAULT_SETTINGS: ShareLinkPluginSettings = {
 	websiteUrl: '',
 }
 
-class SampleSettingTab extends PluginSettingTab {
+class SettingTab extends PluginSettingTab {
 	plugin: MyPlugin
 
 	constructor(app: App, plugin: MyPlugin) {
@@ -35,72 +37,9 @@ class SampleSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const { containerEl } = this
+		this.containerEl.empty()
 
-		containerEl.empty()
-
-		new Setting(containerEl)
-			.setName('Airtable API Key')
-			.setDesc(
-				'This is not shared and it will stay local to your computer.'
-			)
-			.addText((text) =>
-				text
-					.setPlaceholder('Enter your api key')
-					.setValue(this.plugin.settings.airtableAPIKey)
-					.onChange(async (value) => {
-						this.plugin.settings.airtableAPIKey = value
-						await this.plugin.saveSettings()
-					})
-			)
-
-		new Setting(containerEl)
-			.setName('Airtable Base ID')
-			.setDesc('What is the base ID of your Airtable base')
-			.addText((text) =>
-				text
-					.setValue(this.plugin.settings.airtableBase)
-					.onChange(async (value) => {
-						this.plugin.settings.airtableBase = value
-						await this.plugin.saveSettings()
-					})
-			)
-		new Setting(containerEl)
-			.setName('Airtable View')
-			.setDesc('What the name of the view you want to use')
-			.addText((text) =>
-				text
-					.setValue(this.plugin.settings.airtableView)
-					.onChange(async (value) => {
-						this.plugin.settings.airtableView = value
-						await this.plugin.saveSettings()
-					})
-			)
-		new Setting(containerEl)
-			.setName('Website URL')
-			.setDesc('Where your website deployed')
-			.addText((text) =>
-				text
-					.setValue(this.plugin.settings.websiteUrl)
-					.onChange(async (value) => {
-						this.plugin.settings.websiteUrl = value
-						await this.plugin.saveSettings()
-					})
-			)
-
-		if (!this.plugin.settings.websiteUrl) {
-			new Setting(containerEl)
-				.setName('Deploy Website to Netlify')
-				.addButton((button) => {
-					button
-						.setButtonText('Deploy')
-						.onClick(async () =>
-							window.open(
-								'https://app.netlify.com/start/deploy?repository=https://github.com/SaraVieira/obsidian-share-link-plugin'
-							)
-						)
-				})
-		}
+		createSettings(this)
 	}
 }
 
@@ -134,8 +73,8 @@ export default class MyPlugin extends Plugin {
 		})
 
 		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
+			id: 'publish-note',
+			name: 'Publish Note',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const {
 					airtableAPIKey,
@@ -152,7 +91,7 @@ export default class MyPlugin extends Plugin {
 
 				const contents = editor.getValue()
 				const { path, basename } = view.file
-				const slug = this.slugify(path)
+				const slug = slugify(path)
 				try {
 					const notes = await read({
 						base: this.base,
@@ -183,7 +122,7 @@ export default class MyPlugin extends Plugin {
 							title: basename,
 						},
 					})
-					const link = `${websiteUrl}/notes/${this.slugify(
+					const link = `${websiteUrl}/notes/${slugify(
 						updatedRecord.fields.slug
 					)}`
 					navigator.clipboard.writeText(link)
@@ -198,7 +137,7 @@ export default class MyPlugin extends Plugin {
 		})
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this))
+		this.addSettingTab(new SettingTab(this.app, this))
 	}
 
 	onunload() {}
@@ -211,13 +150,13 @@ export default class MyPlugin extends Plugin {
 				view: airtableView,
 				base: this.base,
 				record: {
-					slug: this.slugify(path),
+					slug: slugify(path),
 					data: contents,
 					title: title,
 				},
 			})
 
-			const link = `${websiteUrl}/notes/${this.slugify(
+			const link = `${websiteUrl}/notes/${slugify(
 				createdRecord.fields.slug
 			)}`
 			navigator.clipboard.writeText(link)
@@ -226,28 +165,6 @@ export default class MyPlugin extends Plugin {
 			new Notice('There has been a problem publishing your site')
 			return
 		}
-	}
-
-	slugify(str: string) {
-		str = str.replace(/^\s+|\s+$/g, '') // trim
-		str = str.toLowerCase()
-
-		// remove accents, swap ñ for n, etc
-		var from = 'åàáãäâèéëêìíïîòóöôùúüûñç·/_,:;'
-		var to = 'aaaaaaeeeeiiiioooouuuunc------'
-
-		for (var i = 0, l = from.length; i < l; i++) {
-			str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i))
-		}
-
-		str = str
-			.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-			.replace(/\s+/g, '-') // collapse whitespace and replace by -
-			.replace(/-+/g, '-') // collapse dashes
-			.replace(/^-+/, '') // trim - from start of text
-			.replace(/-+$/, '') // trim - from end of text
-
-		return str
 	}
 
 	async loadSettings() {

@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-notes-publish",
 	"version": "0.1.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Plugin that allows you ti publish notes",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
