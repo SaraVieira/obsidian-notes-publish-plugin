@@ -4,7 +4,8 @@
   AIRTABLEVIEW="Your Airtable View"
 
 [build]
-  publish = "website/.next"
+  base = "wesbite"
+  publish = ".next"
 
 [[plugins]]
 package = "@netlify/plugin-nextjs"
