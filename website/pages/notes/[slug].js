@@ -5,6 +5,7 @@ import remarkInlineLinks from 'remark-inline-links'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import { Code } from '../../components/Code'
+import fm from 'front-matter'
 
 export default function Note({ note }) {
 	return (
@@ -25,11 +26,27 @@ export default function Note({ note }) {
 					})}
 				</time>
 			</small>
+			{note.frontmatter && (
+				<table className="frontmatter">
+					<thead>
+						{Object.keys(note.frontmatter).map((key) => (
+							<th>{key}</th>
+						))}
+					</thead>
+					<tbody>
+						<tr>
+							{Object.values(note.frontmatter).map((value) => (
+								<td>{value}</td>
+							))}
+						</tr>
+					</tbody>
+				</table>
+			)}
 			<ReactMarkdown
 				remarkPlugins={[remarkInlineLinks, gfm]}
 				rehypePlugins={[rehypeRaw]}
-				components={{ code: Code }}
-				renderers={{
+				components={{
+					code: Code,
 					link: (props) => {
 						return props.href.startsWith('/') ? (
 							<a href={props.href}>{props.children}</a>
@@ -63,7 +80,16 @@ export async function getServerSideProps({ query }) {
 		maxRecords: 1,
 	})
 
+	const note = records[0].fields
+	const parsedMD = fm(note.data)
+
 	return {
-		props: { note: records[0].fields },
+		props: {
+			note: {
+				...note,
+				data: parsedMD.body,
+				frontmatter: JSON.parse(JSON.stringify(parsedMD.attributes)),
+			},
+		},
 	}
 }

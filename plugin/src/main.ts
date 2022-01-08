@@ -6,12 +6,29 @@ import {
 	Notice,
 	Plugin,
 	PluginSettingTab,
-	Setting,
 } from 'obsidian'
 
 import Airtable from 'airtable'
-import { create, read, update } from './utils/airtableHelpers'
+import {
+	create,
+	destroy,
+	read,
+	readBySlug,
+	update,
+	updateBySlug,
+} from './utils/airtableHelpers'
 import { createSettings } from './settings'
+import {
+	CREATED_NOTE,
+	CREATING_ERROR,
+	DELETED_NOTE,
+	DELETING_ERROR,
+	NOTE_FOUND,
+	NOTE_NOT_FOUND,
+	NOTE_UPDATED,
+	SETTINGS_NOT_SET,
+	UPDATING_ERROR,
+} from './txt'
 import { slugify } from './utils/slugify'
 
 interface ShareLinkPluginSettings {
@@ -76,19 +93,12 @@ export default class MyPlugin extends Plugin {
 			id: 'publish-note',
 			name: 'Publish Note',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
-				const {
-					airtableAPIKey,
-					websiteUrl,
-					airtableBase,
-					airtableView,
-				} = this.settings
-				if (!airtableAPIKey || !airtableBase || !airtableView) {
-					new Notice(
-						'You need to set your Airtable API Key and Base ID in the settings tab.'
-					)
+				if (!this.isAirtableInitialized()) {
+					new Notice(SETTINGS_NOT_SET)
 					return
 				}
 
+				const { airtableView, websiteUrl } = this.settings
 				const contents = editor.getValue()
 				const { path, basename } = view.file
 				const slug = slugify(path)
@@ -110,8 +120,8 @@ export default class MyPlugin extends Plugin {
 						)
 						return
 					}
-					new Notice('Found your note, updating...')
-					const id = notes[0].getId()
+					new Notice(NOTE_FOUND)
+					const id = notes[0].id
 					const [updatedRecord] = await update({
 						base: this.base,
 						view: airtableView,
@@ -126,17 +136,82 @@ export default class MyPlugin extends Plugin {
 						updatedRecord.fields.slug
 					)}`
 					navigator.clipboard.writeText(link)
-					new Notice(
-						'Your updated note url has been copied to your clipboard'
-					)
+					new Notice(NOTE_UPDATED)
 				} catch (e) {
-					new Notice('There has been a problem publishing your site')
+					console.log(e)
+					new Notice(CREATING_ERROR)
 					return
 				}
 			},
 		})
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
+		this.addCommand({
+			id: 'update-note',
+			name: 'Update Note',
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				if (!this.isAirtableInitialized()) {
+					new Notice(SETTINGS_NOT_SET)
+					return
+				}
+
+				const { path, basename } = view.file
+				const slug = slugify(path)
+				try {
+					await updateBySlug({
+						view: this.settings.airtableView,
+						base: this.base,
+						slug,
+						record: {
+							data: editor.getValue(),
+							slug,
+							title: basename,
+						},
+					})
+					new Notice(NOTE_UPDATED)
+				} catch (e) {
+					console.log(e)
+					new Notice(UPDATING_ERROR)
+					return
+				}
+			},
+		})
+		this.addCommand({
+			id: 'delete-note',
+			name: 'Delete Note',
+			editorCallback: async (_, view: MarkdownView) => {
+				if (!this.isAirtableInitialized()) {
+					new Notice(SETTINGS_NOT_SET)
+					return
+				}
+
+				const { path } = view.file
+				const slug = slugify(path)
+				const { airtableView } = this.settings
+				try {
+					const note = await readBySlug({
+						base: this.base,
+						view: airtableView,
+						slug,
+					})
+
+					if (!note) {
+						new Notice(NOTE_NOT_FOUND)
+						return
+					}
+					await destroy({
+						base: this.base,
+						view: airtableView,
+						id: note.id,
+					})
+					new Notice(DELETED_NOTE)
+				} catch (e) {
+					console.log(e)
+					new Notice(DELETING_ERROR)
+					return
+				}
+			},
+		})
+
 		this.addSettingTab(new SettingTab(this.app, this))
 	}
 
@@ -160,11 +235,19 @@ export default class MyPlugin extends Plugin {
 				createdRecord.fields.slug
 			)}`
 			navigator.clipboard.writeText(link)
-			new Notice('Your note URL has been copied to the clipboard')
+			new Notice(CREATED_NOTE)
 		} catch (e) {
-			new Notice('There has been a problem publishing your site')
+			console.log(e)
+			new Notice(CREATING_ERROR)
 			return
 		}
+	}
+
+	isAirtableInitialized() {
+		const { airtableAPIKey, airtableBase, airtableView } = this.settings
+		if (!airtableAPIKey || !airtableBase || !airtableView) return false
+
+		return true
 	}
 
 	async loadSettings() {
