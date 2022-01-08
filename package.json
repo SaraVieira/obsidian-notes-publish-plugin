@@ -6,8 +6,7 @@
   "scripts": {
     "start:website": "cd website && yarn dev",
     "start:plugin": "cd plugin && yarn dev",
-	"start": "run-p start:website start:plugin"
-
+    "start": "run-p start:website start:plugin"
   },
   "repository": {
     "type": "git",
@@ -25,5 +24,8 @@
     "@typescript-eslint/parser": "^5.2.0",
     "npm-run-all": "^4.1.5",
     "prettier": ">=2"
+  },
+  "dependencies": {
+    "asyncairtable": "^2.3.1"
   }
 }
