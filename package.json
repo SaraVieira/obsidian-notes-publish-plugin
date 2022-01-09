@@ -6,8 +6,7 @@
 	"scripts": {
 		"start:website": "cd website && yarn dev",
 		"start:plugin": "cd plugin && yarn dev",
-		"start": "run-p start:website start:plugin",
-		"build": "cd website && yarn build"
+		"start": "run-p start:website start:plugin"
 	},
 	"repository": {
 		"type": "git",

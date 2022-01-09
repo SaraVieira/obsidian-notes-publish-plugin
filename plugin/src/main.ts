@@ -30,14 +30,13 @@ import {
 	UPDATING_ERROR,
 } from './txt'
 import { slugify } from './utils/slugify'
-
+import { ListNotesModal } from './listNotesModal'
 interface ShareLinkPluginSettings {
 	airtableAPIKey: string
 	airtableBase: string
 	websiteUrl: string
 	airtableView: string
 }
-
 const DEFAULT_SETTINGS: ShareLinkPluginSettings = {
 	airtableAPIKey: '',
 	airtableBase: '',
@@ -46,9 +45,9 @@ const DEFAULT_SETTINGS: ShareLinkPluginSettings = {
 }
 
 class SettingTab extends PluginSettingTab {
-	plugin: MyPlugin
+	plugin: PublishNotesPlugin
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: PublishNotesPlugin) {
 		super(app, plugin)
 		this.plugin = plugin
 	}
@@ -60,7 +59,7 @@ class SettingTab extends PluginSettingTab {
 	}
 }
 
-export default class MyPlugin extends Plugin {
+export default class PublishNotesPlugin extends Plugin {
 	settings: ShareLinkPluginSettings
 	base: any
 
@@ -80,12 +79,11 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings()
 
-		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
+			id: 'list-notes',
+			name: 'List published notes',
 			callback: () => {
-				new SampleModal(this.app).open()
+				new ListNotesModal(this.app, this).open()
 			},
 		})
 
@@ -262,21 +260,5 @@ export default class MyPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings)
 		this.loadAirtable()
-	}
-}
-
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app)
-	}
-
-	onOpen() {
-		const { contentEl } = this
-		contentEl.setText('Woah!')
-	}
-
-	onClose() {
-		const { contentEl } = this
-		contentEl.empty()
 	}
 }
