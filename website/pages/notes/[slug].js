@@ -4,7 +4,7 @@ import Head from 'next/head'
 import remarkInlineLinks from 'remark-inline-links'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
-import { Code } from '../../components/Code'
+import { Code } from '../../Components/Code'
 import fm from 'front-matter'
 
 export default function Note({ note }) {
