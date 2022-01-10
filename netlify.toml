@@ -4,7 +4,5 @@
   AIRTABLEVIEW="Your Airtable View"
 
 [build]
-  base = "website/"
+  base = "website"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
