@@ -155,7 +155,7 @@ export default class PublishNotesPlugin extends Plugin {
 				const { path, basename } = view.file
 				const slug = slugify(path)
 				try {
-					await updateBySlug({
+					const updatedRecord = await updateBySlug({
 						view: this.settings.airtableView,
 						base: this.base,
 						slug,
@@ -165,11 +165,13 @@ export default class PublishNotesPlugin extends Plugin {
 							title: basename,
 						},
 					})
+					const link = `${this.settings.websiteUrl}/notes/${slugify(
+						updatedRecord.slug
+					)}`
+					navigator.clipboard.writeText(link)
 					new Notice(NOTE_UPDATED)
 				} catch (e) {
 					console.log(e)
-					new Notice(UPDATING_ERROR)
-					return
 				}
 			},
 		})
@@ -213,7 +215,7 @@ export default class PublishNotesPlugin extends Plugin {
 		this.addSettingTab(new SettingTab(this.app, this))
 	}
 
-	onunload() {}
+	onunload() { }
 
 	async createAirtableRecord(contents: string, path: string, title: string) {
 		const { websiteUrl, airtableView } = this.settings
