@@ -1,12 +1,12 @@
 import { Setting } from 'obsidian'
-import MyPlugin from './main'
+import PublishNotesPlugin from './main'
 
 export const createSettings = ({
 	containerEl,
 	plugin,
 }: {
 	containerEl: HTMLElement
-	plugin: MyPlugin
+	plugin: PublishNotesPlugin
 }) => {
 	new Setting(containerEl)
 		.setName('Airtable API Key')
